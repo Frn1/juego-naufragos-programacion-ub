@@ -57,8 +57,8 @@ if __name__ == "__main__":
             f"Te quedan {juego.sondas_restantes} sonda{'' if juego.sondas_restantes == 1 else 's'} y {naufragos_restantes} naufrago{'' if naufragos_restantes == 1 else 's'}"
         )
 
-        pos_x = input_int("Introduce la posicion horizontal en el tablero de 0 a 4: ")
-        pos_y = input_int("Introduce la posicion vertical en el tablero de 0 a 4: ")
+        pos_x = input_int(f"Introduce la posicion horizontal en el tablero de 0 a {juego.mapa.tamaño - 1}: ", valores_validos=range(juego.mapa.tamaño))
+        pos_y = input_int(f"Introduce la posicion vertical en el tablero de 0 a {juego.mapa.tamaño - 1}: ", valores_validos=range(juego.mapa.tamaño))
 
         print()
 
