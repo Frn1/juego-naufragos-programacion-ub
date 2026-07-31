@@ -60,6 +60,8 @@ if __name__ == "__main__":
         pos_x = input_int("Introduce la posicion horizontal en el tablero de 0 a 4: ")
         pos_y = input_int("Introduce la posicion vertical en el tablero de 0 a 4: ")
 
+        print()
+
         resultado_rescate = juego.intentar_rescate(pos_x, pos_y)
         if resultado_rescate:
             print("¡Encontraste y rescataste un náufrago!")
