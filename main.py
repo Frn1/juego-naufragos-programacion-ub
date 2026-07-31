@@ -48,7 +48,7 @@ def imprimir_tablero(juego: Juego):
 
 
 if __name__ == "__main__":
-    juego = Juego(naufragos=1)
+    juego = Juego()
     while (ganó := juego.juego_ganado()) is None:
         imprimir_tablero(juego)
 
