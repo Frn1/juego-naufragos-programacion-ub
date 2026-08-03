@@ -12,17 +12,16 @@ class Celda:
     naufrago_avistado: None | bool = None
 
     def __str__(self) -> str:
-
-        if self.naufrago_avistado == True:
-            return "*"
-
         match self.naufrago_en_agua:
             case False:
                 return "R"
 
+        if self.naufrago_avistado == True:
+            return "*"
+
         match self.sonda_empezó_aca:
             case True:
-                return "x"
+                return "~"
             case False:
                 return "+"
 
@@ -77,8 +76,8 @@ class Mapa:
     def marcar_intento_sonda(self, x: int, y: int):
         self.mapa[y][x].sonda_empezó_aca = True
 
-    def marcar_avistamiento(self, x: int, y: int, detectado: bool):
-        self.mapa[y][x].naufrago_avistado = detectado
+    def marcar_avistamiento(self, x: int, y: int):
+        self.mapa[y][x].naufrago_avistado = True
 
     def limpiar_avistamientos(self):
         for fila in self.mapa:
