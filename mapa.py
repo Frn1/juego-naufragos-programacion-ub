@@ -8,8 +8,14 @@ class Celda:
     sonda_empezó_aca: None | bool = None
     # None si no habia un náufrago, False si el náufrago ya fue removido, True si el náufrago todavia sigue en el agua
     naufrago_en_agua: None | bool = None
+    # None cuando no paso ninguna sonda, False si la sonda paso pero no detecto a nadie, True cuando la sonda detecto a alguien    naufrago_avistado: None | bool = None
+    naufrago_avistado: None | bool = None
 
     def __str__(self) -> str:
+
+        if self.naufrago_avistado == True:
+            return "*"
+
         match self.naufrago_en_agua:
             case False:
                 return "R"
@@ -70,3 +76,11 @@ class Mapa:
 
     def marcar_intento_sonda(self, x: int, y: int):
         self.mapa[y][x].sonda_empezó_aca = True
+
+    def marcar_avistamiento(self, x: int, y: int, detectado: bool):
+        self.mapa[y][x].naufrago_avistado = detectado
+
+    def limpiar_avistamientos(self):
+        for fila in self.mapa:
+            for celda in fila:
+                celda.naufrago_avistado = None

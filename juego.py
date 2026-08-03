@@ -39,6 +39,7 @@ class Juego:
         # Se encontró a un náufrago en esa posición. Lo rescatamos (removemos del mapa) y devolvemos True.
         if self.mapa.verificar_sonda(x, y):
             self.mapa.rescatar_naufrago(x, y)
+            self.mapa.marcar_avistamiento(x, y, False)
             return True
         else:
             self.mapa.marcar_intento_sonda(x, y)
@@ -60,6 +61,8 @@ class Juego:
             if not naufrago_detectado and self.mapa.verificar_sonda(x, i):
                 naufrago_detectado = True
             self.mapa.marcar_camino_sonda(x, i)
+
+        self.mapa.marcar_avistamiento(x, y, naufrago_detectado)
         if naufrago_detectado:
             return False
 
