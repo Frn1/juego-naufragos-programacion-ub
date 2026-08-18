@@ -27,9 +27,9 @@ class Juego:
         Esta funcion lanza una sonda, consumiendola.
         Devuelve True si la sonda rescata a un naufrago, False si no rescata pero detecta uno, o None si no rescata ni detecta algo.
         """
-        if x < 0 or x > 4:
+        if x < 0 or x > self.mapa.tamaño - 1:
             raise ValueError("Posicion invalida para x")
-        if y < 0 or y > 4:
+        if y < 0 or y > self.mapa.tamaño - 1:
             raise ValueError("Posicion invalida para y")
         if not self.quedan_sondas_restantes():
             raise RuntimeError("No quedan más sondas")
@@ -45,7 +45,7 @@ class Juego:
 
         naufrago_detectado = False
         # Buscamos naufragos con esa misma posicion vertical pero diferente pos. horizontal, y si hay uno, luego devolvemos False.
-        ancho = 5
+        ancho = self.mapa.tamaño
         for i in range(ancho):
             if x == i:
                 continue
@@ -53,7 +53,7 @@ class Juego:
                 naufrago_detectado = True
             self.mapa.marcar_camino_sonda(i, y)
         # Buscamos naufragos con esa misma posicion horizontal pero diferente pos. vertical, y si hay uno, luego devolvemos false.
-        alto = 5
+        alto = self.mapa.tamaño
         for i in range(alto):
             if y == i:
                 continue

@@ -1,7 +1,5 @@
 import random
 
-import mapa
-
 
 class Celda:
     # None cuando no paso ninguna sonda, False cuando la sonda pasó pero no empezó aca, True cuando la zona empezó ahí
