@@ -1,4 +1,10 @@
+from io import TextIOWrapper
+from typing import TYPE_CHECKING, Self
+
 from mapa import Mapa
+
+if TYPE_CHECKING:
+    from _typeshed import SupportsWrite
 
 
 class Juego:
@@ -66,3 +72,14 @@ class Juego:
             return False
 
         return None
+
+    def serializar(self, output: "SupportsWrite[str]") -> None:
+        output.write(f"{self.sondas_restantes}\n")
+        self.mapa.serializar(output)
+
+    @classmethod
+    def deserializar(cls, input: TextIOWrapper) -> Self:
+        output = cls.__new__(cls)
+        output.sondas_restantes = int(input.readline())
+        output.mapa = Mapa.deserializar(input)
+        return output

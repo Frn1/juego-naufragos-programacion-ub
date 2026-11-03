@@ -1,5 +1,10 @@
+import csv
 import random
+from io import TextIOWrapper
+from typing import TYPE_CHECKING, Self
 
+if TYPE_CHECKING:
+    from _typeshed import SupportsWrite
 
 class Celda:
     # None cuando no paso ninguna sonda, False cuando la sonda pasó pero no empezó aca, True cuando la zona empezó ahí
@@ -8,6 +13,40 @@ class Celda:
     naufrago_en_agua: None | bool = None
     # None cuando no paso ninguna sonda, False si la sonda paso pero no detecto a nadie, True cuando la sonda detecto a alguien    naufrago_avistado: None | bool = None
     naufrago_avistado: None | bool = None
+
+    def serializar(self) -> str:
+        def serializar_none_bool(v: None | bool) -> str:
+            match v:
+                case True:
+                    return "V"
+                case False:
+                    return "F"
+                case None:
+                    return " "
+
+        output: str = ""
+        output += serializar_none_bool(self.sonda_empezó_aca)
+        output += serializar_none_bool(self.naufrago_en_agua)
+        output += serializar_none_bool(self.naufrago_avistado)
+
+        return output
+
+    @classmethod
+    def deserializar(cls, texto: str) -> Self:
+        def deserializar_none_bool(v: str) -> None | bool:
+            match v:
+                case "V":
+                    return True
+                case "F":
+                    return False
+                case " ":
+                    return None
+
+        output = cls()
+        output.sonda_empezó_aca = deserializar_none_bool(texto[0])
+        output.naufrago_en_agua = deserializar_none_bool(texto[1])
+        output.naufrago_avistado = deserializar_none_bool(texto[2])
+        return output
 
     def __str__(self) -> str:
         match self.naufrago_en_agua:
@@ -81,3 +120,28 @@ class Mapa:
         for fila in self.mapa:
             for celda in fila:
                 celda.naufrago_avistado = None
+
+    def serializar(self, output: "SupportsWrite[str]") -> None:
+        output.write(f"{self.tamaño}x{self.tamaño}\n")
+        writer = csv.writer(output)
+        for fila in self.mapa:
+            writer.writerow(c.serializar() for c in fila)
+
+    @classmethod
+    def deserializar(cls, input: TextIOWrapper) -> Self:
+        tamaño_str = input.readline()
+        tamaño_split = [int(t) for t in tamaño_str.split("x")]
+        if len(tamaño_split) != 2:
+            raise ValueError("Formato del tamaño incorrecto")
+        if tamaño_split[0] != tamaño_split[1]:
+            raise ValueError("Tamaño debe ser un cuadrado")
+        tamaño = tamaño_split[0]
+        celdas = []
+        reader = csv.reader(input.readline() for _ in range(tamaño))
+        for row in reader:
+            # el f"{c:>3}" esta por que a veces los editores de texto remueven espacios al final de una linea
+            celdas.append([Celda.deserializar(f"{c:<3}") for c in row])
+        output = cls.__new__(cls)
+        output.tamaño = tamaño
+        output.mapa = celdas
+        return output

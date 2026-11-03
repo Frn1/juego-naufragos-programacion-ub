@@ -1,3 +1,6 @@
+import sys
+from pathlib import Path
+
 from juego import Juego
 
 
@@ -47,9 +50,22 @@ def imprimir_tablero(juego: Juego):
     imprimir_pared_horizontal(juego)
 
 
+ARCHIVO_GUARDADO = Path(sys.modules["__main__"].__file__ or "").parent.joinpath(
+    "JuegoGuardado.txt"
+)
+
 if __name__ == "__main__":
-    juego = Juego()
+    if ARCHIVO_GUARDADO.exists():
+        print("Juego guardado encontrado! Cargando...")
+        with open(ARCHIVO_GUARDADO, "r") as guardado:
+            juego = Juego.deserializar(guardado)
+    else:
+        print("Juego guardado no encontrado, creando nuevo...")
+        juego = Juego()
+
     while (ganó := juego.juego_ganado()) is None:
+        with open(ARCHIVO_GUARDADO, "w") as guardado:
+            juego.serializar(guardado)
         imprimir_tablero(juego)
 
         naufragos_restantes = juego.mapa.naufragos_restantes()
@@ -57,8 +73,14 @@ if __name__ == "__main__":
             f"Te quedan {juego.sondas_restantes} sonda{'' if juego.sondas_restantes == 1 else 's'} y {naufragos_restantes} naufrago{'' if naufragos_restantes == 1 else 's'}"
         )
 
-        pos_x = input_int(f"Introduce la posicion horizontal en el tablero de 0 a {juego.mapa.tamaño - 1}: ", valores_validos=range(juego.mapa.tamaño))
-        pos_y = input_int(f"Introduce la posicion vertical en el tablero de 0 a {juego.mapa.tamaño - 1}: ", valores_validos=range(juego.mapa.tamaño))
+        pos_x = input_int(
+            f"Introduce la posicion horizontal en el tablero de 0 a {juego.mapa.tamaño - 1}: ",
+            valores_validos=range(juego.mapa.tamaño),
+        )
+        pos_y = input_int(
+            f"Introduce la posicion vertical en el tablero de 0 a {juego.mapa.tamaño - 1}: ",
+            valores_validos=range(juego.mapa.tamaño),
+        )
 
         print()
 
@@ -79,3 +101,6 @@ if __name__ == "__main__":
         print(
             f"Perdiste... Fallaste en rescatar {naufragos_restantes} naufrago{'' if naufragos_restantes == 1 else 's'}"
         )
+    # Si existe, borramos el archivo de guardado
+    if ARCHIVO_GUARDADO.exists():
+        ARCHIVO_GUARDADO.unlink()
